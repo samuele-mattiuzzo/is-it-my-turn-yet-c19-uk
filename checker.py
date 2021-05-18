@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 import os, sys  # system imports
-import bs4, requests, smtplib
+import bs4, requests, smtplib, time
+from datetime import datetime, timedelta
 from pydub import AudioSegment as AS
 from pydub.playback import play
 
@@ -16,7 +17,8 @@ TEXT_TEMPLATES = [
     'people aged {} and over',
     'people who will turn {} before 1 July 2021'
 ]
-DEFAULT_AGE = 35
+DEFAULT_AGE = 35  # in years
+DEFAULT_TIMER = 15  # in minutes
 
 
 def scraper(AGE=DEFAULT_AGE):
@@ -32,12 +34,17 @@ def scraper(AGE=DEFAULT_AGE):
     for req in requirements:
         if req.text.lower() in [tpl.format(AGE) for tpl in TEXT_TEMPLATES]:
             play(ALARM_SOUND[:ALARM_LENGTH])
-            
+            break;            
 
 if __name__ == '__main__':
     age = DEFAULT_AGE
     if len(sys.argv) == 2:
         age = int(sys.argv[1])
 
-    scraper(age)
+    while 1:
+        print('[{}] > Checking...'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        sleep = DEFAULT_TIMER - datetime.now().minute % DEFAULT_TIMER  # checks every DEFAULT_TIMER minutes
+        if sleep == DEFAULT_TIMER:
+            scraper(age)
+        time.sleep(DEFAULT_TIMER * 60)
 
