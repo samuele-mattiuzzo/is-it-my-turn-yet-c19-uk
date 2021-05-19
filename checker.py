@@ -15,7 +15,7 @@ ALARM_LENGTH = 15 * 1000  # in milliseconds
 NHS_URL = 'https://www.nhs.uk/conditions/coronavirus-covid-19/coronavirus-vaccination/coronavirus-vaccine/'
 TEXT_TEMPLATES = [
     'people aged {} and over',
-    'people who will turn {} before 1 July 2021'
+    'people who will turn {} before 1 july 2021'
 ]
 DEFAULT_AGE = 35  # in years
 DEFAULT_TIMER = 15  # in minutes
@@ -31,20 +31,22 @@ def scraper(AGE=DEFAULT_AGE):
 
     # Find the list items
     requirements = section.find_next('ul').find_all('li')
-    for req in requirements:
+    for req in requirements[:2]:
         if req.text.lower() in [tpl.format(AGE) for tpl in TEXT_TEMPLATES]:
             play(ALARM_SOUND[:ALARM_LENGTH])
-            break;            
+
 
 if __name__ == '__main__':
     age = DEFAULT_AGE
+    first_run = True
     if len(sys.argv) == 2:
         age = int(sys.argv[1])
 
     while 1:
-        print('[{}] > Checking...'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
         sleep = DEFAULT_TIMER - datetime.now().minute % DEFAULT_TIMER  # checks every DEFAULT_TIMER minutes
-        if sleep == DEFAULT_TIMER:
+        if sleep == DEFAULT_TIMER or first_run:
+            print('[{}] > Checking...'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            first_run = False
             scraper(age)
         time.sleep(DEFAULT_TIMER * 60)
 
