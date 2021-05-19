@@ -18,7 +18,7 @@ TEXT_TEMPLATES = [
     'people who will turn {} before 1 july 2021'
 ]
 DEFAULT_AGE = 35  # in years
-DEFAULT_TIMER = 15  # in minutes
+DEFAULT_TIMER = 30  # in minutes
 
 
 def scraper(AGE=DEFAULT_AGE):
@@ -38,15 +38,11 @@ def scraper(AGE=DEFAULT_AGE):
 
 if __name__ == '__main__':
     age = DEFAULT_AGE
-    first_run = True
     if len(sys.argv) == 2:
         age = int(sys.argv[1])
 
     while 1:
-        sleep = DEFAULT_TIMER - datetime.now().minute % DEFAULT_TIMER  # checks every DEFAULT_TIMER minutes
-        if sleep == DEFAULT_TIMER or first_run:
-            print('[{}] > Checking...'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-            first_run = False
-            scraper(age)
+        print('[{}] > Checking...'.format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        scraper(age)
         time.sleep(DEFAULT_TIMER * 60)
 
